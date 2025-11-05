@@ -67,19 +67,19 @@ services:
       - ./config/stream:/config:ro
     restart: unless-stopped
 
-  # dashboard:
-  #   build:
-  #     context: .
-  #     dockerfile: deploy/docker/dashboard.dockerfile
-  #   container_name: bc_dashboard
-  #   depends_on:
-  #     kafka:
-  #       condition: service_healthy
-  #   ports:
-  #     - "9000:8080"
-  #   volumes:
-  #     - config:/config:ro
-  #   restart: unless-stopped
+  dashboard:
+    build:
+      context: ../../bc-go
+      dockerfile: ../bc-go-deploy/docker/dashboard.dockerfile
+    container_name: bc_dashboard
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./config/dashboard:/config:ro
+    ports:
+      - "9000:8080"
+    restart: unless-stopped
 
 volumes:
   kafka_data:

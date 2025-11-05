@@ -22,7 +22,7 @@ services:
       KAFKA_LOG_SEGMENT_BYTES: 107374182
       KAFKA_LOG_CLEANUP_POLICY: delete
     volumes:
-      - data_kafka:/var/lib/kafka/data
+      - kafka_data:/var/lib/kafka/data
     networks:
       - traefik-net
     healthcheck:
@@ -40,7 +40,7 @@ services:
     ports:
       - "9094:8080"
     volumes:
-      - ./deploy/config/akhq/application.yml:/app/application.yml:ro
+      - ./config/akhq/application.yml:/app/application.yml:ro
     restart: unless-stopped
     networks:
       - traefik-net
@@ -71,47 +71,33 @@ services:
 
   stream:
     build:
-      context: .
-      dockerfile: deploy/docker/stream.dockerfile
+      context: ../../bc-go
+      dockerfile: ../bc-go-deploy/docker/stream.dockerfile
     container_name: bc_stream
     depends_on:
       kafka:
         condition: service_healthy
     volumes:
-      - config:/config:ro
-    restart: unless-stopped
-    networks:
-      - traefik-net
-
-  alpha:
-    build:
-      context: .
-      dockerfile: deploy/docker/alpha.dockerfile
-    container_name: bc_alpha
-    depends_on:
-      kafka:
-        condition: service_healthy
-    volumes:
-      - config:/config:ro
+      - ./config/stream:/config:ro
     restart: unless-stopped
     networks:
       - traefik-net
 
   dashboard:
     build:
-      context: .
-      dockerfile: deploy/docker/dashboard.dockerfile
+      context: ../../bc-go
+      dockerfile: ../bc-go-deploy/docker/dashboard.dockerfile
     container_name: bc_dashboard
     depends_on:
       kafka:
         condition: service_healthy
     volumes:
-      - config:/config:ro
-    expose:
-      - "8080"
+      - ./config/dashboard:/config:ro
+    ports:
+      - "9000:8080"
+    restart: unless-stopped
     networks:
       - traefik-net
-    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`lab9.studio`) && !PathPrefix(`/api`)"
@@ -147,30 +133,24 @@ services:
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
 
 volumes:
-  data_kafka:
+  kafka_data:
     driver: local
     driver_opts:
       o: bind
-      type: bind
+      type: none
       device: ./data/kafka
-  config:
-    driver: local
-    driver_opts:
-      o: bind
-      type: bind
-      device: ./deploy/config
   pg_data:
     driver: local
     driver_opts:
       o: bind
-      type: bind
+      type: none
       device: ./data/postgres
   pg_init:
     driver: local
     driver_opts:
       o: bind
-      type: bind
-      device: ./deploy/sql
+      type: none
+      device: ../sql
 
 networks:
   traefik-net:
