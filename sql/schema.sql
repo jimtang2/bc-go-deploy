@@ -112,3 +112,27 @@ CREATE TABLE IF NOT EXISTS alpha (
     profit          DOUBLE PRECISION NOT NULL,
     timestamp       BIGINT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS matches (
+    id                  BIGINT PRIMARY KEY,
+    pair                TEXT NOT NULL,             
+    ask_exchange        TEXT NOT NULL,             
+    ask_price           DOUBLE PRECISION NOT NULL, 
+    ask_size            DOUBLE PRECISION NOT NULL, 
+    ask_time            BIGINT NOT NULL,           
+    ask_fee_rate        DOUBLE PRECISION NOT NULL, 
+    bid_exchange        TEXT NOT NULL,             
+    bid_price           DOUBLE PRECISION NOT NULL, 
+    bid_size            DOUBLE PRECISION NOT NULL, 
+    bid_time            BIGINT NOT NULL,           
+    bid_fee_rate        DOUBLE PRECISION NOT NULL, 
+    timestamp           BIGINT NOT NULL,           
+    calc_volume         DOUBLE PRECISION NOT NULL, 
+    calc_price_diff     DOUBLE PRECISION NOT NULL, 
+    calc_price_avg      DOUBLE PRECISION NOT NULL, 
+    calc_spread         DOUBLE PRECISION NOT NULL, 
+    calc_spread_pct     DOUBLE PRECISION NOT NULL, 
+    calc_bid_fee        DOUBLE PRECISION NOT NULL, 
+    calc_ask_fee        DOUBLE PRECISION NOT NULL,  
+    calc_profit_loss    DOUBLE PRECISION NOT NULL   
+);

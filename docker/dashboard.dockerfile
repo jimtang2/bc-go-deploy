@@ -10,14 +10,13 @@ FROM golang:1.25-alpine AS server-builder
 WORKDIR /app/server
 COPY ./go.mod ./go.sum ./
 RUN go mod download
-COPY cmd/dashboard/ .
-COPY lib ./lib
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o dashboard .
+COPY . .
+COPY --from=client-builder /app/cmd/dashboard/dist ./dist
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -a -installsuffix cgo -o dashboard cmd/dashboard/*.go
 
 FROM alpine:3.20
 RUN apk add --no-cache ca-certificates
 WORKDIR /app
-COPY --from=client-builder /app/cmd/dashboard/dist ./dist
 COPY --from=server-builder /app/server/dashboard .
 EXPOSE 8080
 CMD ["./dashboard"]
