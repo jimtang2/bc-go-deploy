@@ -11,7 +11,7 @@ WORKDIR /app/server
 COPY ./go.mod ./go.sum ./
 RUN go mod download
 COPY . .
-COPY --from=client-builder /app/cmd/dashboard/dist ./dist
+COPY --from=client-builder /app/cmd/dashboard/dist ./cmd/dashboard/dist
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -a -installsuffix cgo -o dashboard cmd/dashboard/*.go
 
 FROM alpine:3.20
