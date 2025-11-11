@@ -1,8 +1,5 @@
 # Makefile
-.PHONY: build recreate
+.PHONY: docker_build_recreate
 
-build: 
-	docker compose build
-
-recreate: build
-	docker compose up -d --force-recreate dashboard stream
+docker_build_recreate: 
+	docker compose up -d --build --force-recreate dashboard stream
